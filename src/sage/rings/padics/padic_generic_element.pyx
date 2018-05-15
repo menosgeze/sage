@@ -1546,6 +1546,30 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return self.valuation(p) / self.parent().ramification_index()
 
+    def teichmuller_character(self):
+        r"""
+        Returns the Teichmuller character from Fp to Zp value of 
+        the unit part of a nonzero element in Zp.
+
+        INPUT:
+
+        - ``a`` -- a nonzero element in the p-adic Field 
+        with capped relative precision.
+
+        OUTPUT:
+
+        - The Teichmuller character from the nonzero 
+        elements of Qp to Zp value of a
+
+        EXAMPLES::
+
+        sage: R = Qp(5,3); a = R(1234); teichmuller_character(a)
+        4 + 4*5 + 4*5^2 + O(5^3)
+        sage: R = Qp(5,7); a = R(1234); teichmuller_character(a)
+        4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + O(5^7)
+        """
+
+
     def rational_reconstruction(self):
         r"""
         Returns a rational approximation to this `p`-adic number
