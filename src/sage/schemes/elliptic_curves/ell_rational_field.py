@@ -62,11 +62,8 @@ from . import ell_point
 from . import ell_tate_curve
 from . import ell_torsion
 from . import heegner
-from   .gp_simon import simon_two_descent
-from   .lseries_ell import Lseries_ell
 from . import mod5family
 from   .modular_parametrization import ModularParameterization
-from . import padic_lseries
 from . import padics
 from   .mod_sym_num import ModularSymbolNumerical
 
@@ -92,7 +89,6 @@ from sage.rings.all import (
     ComplexField, RationalField)
 
 import sage.misc.all as misc
-from sage.misc.all import verbose
 
 from sage.functions.log import log
 
@@ -408,7 +404,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__is_integral
         except AttributeError:
-            one = Integer(1)
             self.__is_integral = bool(misc.mul([x.denominator() == 1 for x in self.ainvs()]))
             return self.__is_integral
 
@@ -2623,7 +2618,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             minimal = False
             Emin = self.minimal_model()
             phi = self.isomorphism_to(Emin)
-            points = [phi(P) for P in points]
+            points = [phi(_P) for _P in points]
         else:
             Emin = self
 
@@ -2960,29 +2955,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if not arith.is_prime(p):
             raise ArithmeticError("p must be prime")
         return Integer(self.pari_mincurve().ellap(p))
-
-    def quadratic_twist(self, D):
-        """
-       Return the quadratic twist of this elliptic curve by D.
-
-       D must be a nonzero rational number.
-
-       .. note::
-
-          This function overrides the generic ``quadratic_twist()``
-          function for elliptic curves, returning a minimal model.
-
-       EXAMPLES::
-
-           sage: E = EllipticCurve('37a1')
-           sage: E2=E.quadratic_twist(2); E2
-           Elliptic Curve defined by y^2  = x^3 - 4*x + 2 over Rational Field
-           sage: E2.conductor()
-           2368
-           sage: E2.quadratic_twist(2) == E
-           True
-       """
-        return EllipticCurve_number_field.quadratic_twist(self, D).minimal_model()
 
     def minimal_model(self):
         r"""
@@ -5187,7 +5159,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              {0: 0, 1: 5, 2: 25})
         """
         from sage.graphs.graph import Graph
-        from sage.rings.real_mpfr import RR
         isocls = self.isogeny_class()
         M = isocls.matrix(fill=True).change_ring(rings.RR)
         # see trac #4889 for nebulous M.list() --> M.entries() change...
@@ -5972,8 +5943,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if verbose:
             import sys  # so we can flush stdout for debugging
 
-        g2 = self.c4()/12
-        g3 = self.c6()/216
         disc = self.discriminant()
         j = self.j_invariant()
         b2 = self.b2()
@@ -6045,7 +6014,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             mw_base_log.append(mw_base[i].elliptic_logarithm().abs())
             mod_h_list.append(max(mw_base[i].height(),h_E,c7*mw_base_log[i]**2))
             c9_help_list.append((mod_h_list[i]).sqrt()/mw_base_log[i])
-        c8 = max(e*h_E,max(mod_h_list))
         c9 = e/c7.sqrt() * min(c9_help_list)
         n=r+1
         c10 = R(2 * 10**(8+7*n) * R((2/e)**(2 * n**2)) * (n+1)**(4 * n**2 + 10 * n) * log(c9)**(-2*n - 1) * misc.prod(mod_h_list))
@@ -7041,7 +7009,7 @@ def elliptic_curve_congruence_graph(curves):
         Graph on 12 vertices
     """
     from sage.graphs.graph import Graph
-    from sage.arith.all import lcm, prime_divisors
+    from sage.arith.all import lcm
     from sage.rings.fast_arith import prime_range
     from sage.misc.all import prod
     G = Graph()
