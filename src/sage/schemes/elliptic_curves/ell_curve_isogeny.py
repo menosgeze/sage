@@ -4124,3 +4124,4 @@ def unfill_isogeny_matrix(M):
                 M1[i, j] = zero
                 M1[j, i] = zero
     return M1
+
